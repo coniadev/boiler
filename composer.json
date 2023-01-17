@@ -33,7 +33,7 @@
     },
     "require-dev": {
         "conia/chuck": "dev-main",
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2 || ^1.0.0",
         "nyholm/psr7": "^1.5",
         "nyholm/psr7-server": "dev-master",
         "pestphp/pest": "^1.21",
