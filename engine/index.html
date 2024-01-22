@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>The Engine - Conia Boiler</title>
+
+    <link rel="shortcut icon" href="../logo.svg">
+    <link rel="mask-icon" href="../logo.svg" color="#000000">
+
+    <link rel="stylesheet" href="../styles.css">
+
+
+
+    <script>var base_url = '..';</script>
+    <script src="../highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+
+
+
+
+    <script src="../search/main.js"></script>
+
+</head>
+
+<body>
+    <header class="mobile">
+        <div class="logo">
+            <a href="https://conia.dev">
+                <img src="../logo.svg" alt="The Engine - Conia Boiler Logo">
+            </a>
+            Boiler
+        </div>
+        <div class="toc-link">
+            <a href="#navigation">Jump to table of contents</a>
+        </div>
+    </header>
+    <main>
+        <aside id="navigation" class="pane">
+            <div class="logo">
+                <a href="https://conia.dev">
+                    <img src="../logo.svg" alt="The Engine - Conia Boiler Logo">
+                </a>
+                Boiler
+            </div>
+
+            <div class="title">Table of Contents</div>
+
+            <ul>
+            
+                <!--
+
+-->
+
+<li >
+    <a href="..">Introduction</a>
+</li>
+
+            
+                <!--
+
+-->
+
+<li >
+    <a href="../quickstart/">Quick Start</a>
+</li>
+
+            
+                <!--
+
+-->
+
+<li class="active">
+    <a href="./">The Engine</a>
+</li>
+
+            
+                <!--
+
+-->
+
+<li >
+    <a href="../rendering/">Rendering Templates</a>
+</li>
+
+            
+                <!--
+
+-->
+
+<li >
+    <a href="../values/">Displaying Values</a>
+</li>
+
+            
+                <!--
+
+-->
+
+<li >
+    <a href="../layouts/">Layouts</a>
+</li>
+
+            
+                <!--
+
+-->
+
+<li >
+    <a href="../inserts/">Inserts</a>
+</li>
+
+            
+                <!--
+
+-->
+
+<li >
+    <a href="../sections/">Sections</a>
+</li>
+
+            
+                <!--
+
+-->
+
+<li >
+    <a href="../template/">Template</a>
+</li>
+
+            
+            </ul>
+
+            <div class="title">Quick Search</div>
+
+            <div role="search">
+                <form action="../search.html" method="get">
+                <input type="search" name="q" placeholder="Search docs" />
+                </form>
+            </div>
+        </aside>
+
+        <article>
+            <div>
+            
+                <h1 id="the-engine">The Engine</h1>
+<p>The <code>Engine</code> is the Boiler's central object and usually the only one you have to 
+manually instatiate. It is used to locate and load templates from the file system.</p>
+<p>Throughout this page we assume the following directory structure:</p>
+<pre><code class="language-text">path
+`-- to
+    |-- templates
+    `-- additional
+</code></pre>
+<h2 id="creating-the-engine-instance">Creating the <code>Engine</code> instance</h2>
+<p>To create an Engine instance, you simply pass one or more paths to directories 
+where your templates are located. Additionally, you can optionally set default values
+that are available for all your templates, or you can globally disable the autoescaping
+feature.</p>
+<h3 id="using-a-single-template-directory">Using a single template directory</h3>
+<p>The only required parameter of the constructor is the path to a directory where your templates reside:</p>
+<pre><code>$engine = new \Conia\Boiler\Engine('/path/to/templates');
+</code></pre>
+<p>If the directory does not exists, Boiler throws a <code>\Conia\Boiler\Exception\DirectoryNotFound</code>
+exception.</p>
+<h3 id="using-multiple-directories">Using multiple directories</h3>
+<p>If you have multiple directories, pass them in an array:</p>
+<pre><code>$engine = new \Conia\Boiler\Engine(['/path/to/templates', '/path/to/additional']);
+</code></pre>
+<p><strong>Note</strong>: The directories are searched in order. </p>
+<p>Using the example above: If a template cannot be located 
+in <code>/path/to/additional</code>, Boiler tries to find it in <code>/path/to/additional</code> and so on. </p>
+<h3 id="using-namespaces">Using namespaces</h3>
+<p>You can use namespaces to later be able to address a specific directory. Pass the list of
+directories as associative array where the keys serve as namespaces:</p>
+<pre><code>$engine = new \Conia\Boiler\Engine([
+    'first' =&gt; '/path/to/templates', 
+    'second' =&gt; '/path/to/additional'
+]);
+</code></pre>
+<p>Check <a href="../rendering/"><em>Rendering Templates</em></a> to see it in action.</p>
+<h3 id="adding-default-values">Adding default values</h3>
+<p>You can assign default values which are available in all templates:</p>
+<pre><code>$engine = new \Conia\Boiler\Engine('/path/to/dir', ['value' =&gt; 'default value']);
+</code></pre>
+<h3 id="turning-off-autoescaping">Turning off autoescaping</h3>
+<p>If you don't want to use the autoescaping feature, e. g. to improve the performance of your application,
+you can turn it off globally:</p>
+<pre><code>$engine = new \Conia\Boiler\Engine('/path/to/dir', [], false);
+
+// better:
+$engine = new \Conia\Boiler\Engine('/path/to/dir', autoescape: false);
+</code></pre>
+<h2 id="rendering-templates">Rendering Templates</h2>
+<p>You simplic call the <code>render</code> method and pass the name/path of the template and optionally
+an array of values (the context) which will be available as variables in the template.</p>
+<pre><code>$engine-&gt;render('template');
+
+// with context
+$engine-&gt;render('template', ['value1' =&gt; 1, 'value2' =&gt; 2]);
+</code></pre>
+<p>See <a href="../rendering/"><em>Rendering Templates</em></a> for more information.</p>
+<h2 id="adding-custom-template-methods">Adding custom template methods</h2>
+<p>Custom methods can be accessed in templates using <code>$this</code> (See <a href="../rendering/"><em>Rendering Templates</em></a>).
+To a add a method you pass a<a href="https://www.php.net/manual/en/functions.anonymous.php"><code>Closure</code> or anonymous function</a> to <code>registerMethod</code>:</p>
+<pre><code>$engine-&gt;registerMethod('upper', function (string $value): string {
+    return strtoupper($value);
+});
+</code></pre>
+<h2 id="other-useful-engine-methods">Other useful Engine methods</h2>
+<h3 id="check-if-a-template-exists">Check if a template exists</h3>
+<p>To check if a template exists before rendering it, use the method <code>exists</code>:</p>
+<pre><code>if ($engine-&gt;exists('template')) {
+    $engine-&gt;render('template');
+}
+</code></pre>
+<h3 id="get-the-file-system-path-of-a-template">Get the file system path of a template</h3>
+<pre><code>$filePath = $engine-&gt;getFile('template');
+</code></pre>
+<h3 id="get-a-template-instance-without-rendering-it">Get a template instance without rendering it</h3>
+<pre><code>$template = $engine-&gt;template('template');
+
+assert($template instanceof \Conia\Boiler\Template);
+</code></pre>
+            
+            </div>
+        </article>
+
+        <aside class="toc desktop">
+            <!-- github repo URL -->
+            
+                <a href="https://github.com/coniadev/boiler/edit/master/docs/engine.md" class="github-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+                    Edit on GitHub
+                </a>
+            
+
+            <div class="title">This Page</div>
+
+            <ul>
+            
+                <li><a href="#the-engine">The Engine</a></li>
+                
+                    <li>
+                        <a href="#creating-the-engine-instance">Creating the Engine instance</a>
+                        
+                            <ul>
+                                
+                                <li>
+                                    <a href="#using-a-single-template-directory">Using a single template directory</a>
+                                </li>
+                                
+                                <li>
+                                    <a href="#using-multiple-directories">Using multiple directories</a>
+                                </li>
+                                
+                                <li>
+                                    <a href="#using-namespaces">Using namespaces</a>
+                                </li>
+                                
+                                <li>
+                                    <a href="#adding-default-values">Adding default values</a>
+                                </li>
+                                
+                                <li>
+                                    <a href="#turning-off-autoescaping">Turning off autoescaping</a>
+                                </li>
+                                
+                            </ul>
+                        
+                    </li>
+                
+                    <li>
+                        <a href="#rendering-templates">Rendering Templates</a>
+                        
+                    </li>
+                
+                    <li>
+                        <a href="#adding-custom-template-methods">Adding custom template methods</a>
+                        
+                    </li>
+                
+                    <li>
+                        <a href="#other-useful-engine-methods">Other useful Engine methods</a>
+                        
+                            <ul>
+                                
+                                <li>
+                                    <a href="#check-if-a-template-exists">Check if a template exists</a>
+                                </li>
+                                
+                                <li>
+                                    <a href="#get-the-file-system-path-of-a-template">Get the file system path of a template</a>
+                                </li>
+                                
+                                <li>
+                                    <a href="#get-a-template-instance-without-rendering-it">Get a template instance without rendering it</a>
+                                </li>
+                                
+                            </ul>
+                        
+                    </li>
+                
+            
+            </ul>
+
+            <div class="title">Navigate</div>
+
+        
+            <ul class="prevnext">
+                <li>
+                    <a href="/" title="Home page">
+                        Home page
+                    </a>
+                </li>
+                
+                <li>
+                    Previous:
+                    <a href="../quickstart/" title="Quick Start">
+                        <i>Quick Start</i>
+                    </a>
+                </li>
+                
+                
+                <li>
+                    Next:
+                    <a href="../rendering/" title="Rendering Templates">
+                        <i>Rendering Templates</i>
+                    </a>
+                </li>
+                
+            </ul>
+        
+        </aside>
+    </main>
+
+    <footer>
+        © 2022 ebene fünf GmbH |
+        Built with <a href="https://www.mkdocs.org">MkDocs</a>.
+    </footer>
+
+  <!--
+  MkDocs version      : 1.5.3
+  Docs Build Date UTC : 2024-01-22 15:38:15.468395+00:00
+  -->
+</body>
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Rendering Templates - Conia Boiler</title>
+
+    <link rel="shortcut icon" href="../logo.svg">
+    <link rel="mask-icon" href="../logo.svg" color="#000000">
+
+    <link rel="stylesheet" href="../styles.css">
+
+
+
+    <script>var base_url = '..';</script>
+    <script src="../highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+
+
+
+
+    <script src="../search/main.js"></script>
+
+</head>
+
+<body>
+    <header class="mobile">
+        <div class="logo">
+            <a href="https://conia.dev">
+                <img src="../logo.svg" alt="Rendering Templates - Conia Boiler Logo">
+            </a>
+            Boiler
+        </div>
+        <div class="toc-link">
+            <a href="#navigation">Jump to table of contents</a>
+        </div>
+    </header>
+    <main>
+        <aside id="navigation" class="pane">
+            <div class="logo">
+                <a href="https://conia.dev">
+                    <img src="../logo.svg" alt="Rendering Templates - Conia Boiler Logo">
+                </a>
+                Boiler
+            </div>
+
+            <div class="title">Table of Contents</div>
+
+            <ul>
+            
+                <!--
+
+-->
+
+<li >
+    <a href="..">Introduction</a>
+</li>
+
+            
+                <!--
+
+-->
+
+<li >
+    <a href="../quickstart/">Quick Start</a>
+</li>
+
+            
+                <!--
+
+-->
+
+<li >
+    <a href="../engine/">The Engine</a>
+</li>
+
+            
+                <!--
+
+-->
+
+<li class="active">
+    <a href="./">Rendering Templates</a>
+</li>
+
+            
+                <!--
+
+-->
+
+<li >
+    <a href="../values/">Displaying Values</a>
+</li>
+
+            
+                <!--
+
+-->
+
+<li >
+    <a href="../layouts/">Layouts</a>
+</li>
+
+            
+                <!--
+
+-->
+
+<li >
+    <a href="../inserts/">Inserts</a>
+</li>
+
+            
+                <!--
+
+-->
+
+<li >
+    <a href="../sections/">Sections</a>
+</li>
+
+            
+                <!--
+
+-->
+
+<li >
+    <a href="../template/">Template</a>
+</li>
+
+            
+            </ul>
+
+            <div class="title">Quick Search</div>
+
+            <div role="search">
+                <form action="../search.html" method="get">
+                <input type="search" name="q" placeholder="Search docs" />
+                </form>
+            </div>
+        </aside>
+
+        <article>
+            <div>
+            
+                <h1 id="rendering-templates">Rendering Templates</h1>
+<p>After you created an <a href="../engine/"><code>\Conia\Boiler\Engine</code></a> object, you can render
+templates using its <code>render()</code> method.</p>
+<p>Throughout this page we assume the following directory structure ...</p>
+<pre><code class="language-text">path
+`-- to
+    |-- templates
+    |   |-- subdir
+    |   |   `-- subtemplate.php
+    |   |-- blog.php
+    |   |-- layout.php
+    |   |-- more.php
+    |   `-- page.php
+    |
+    `-- theme
+        |-- blog.php
+        `-- additional.php
+</code></pre>
+<p>... and the <a href="../engine/"><code>Engine</code></a> initialized in this way:</p>
+<pre><code>$engine = new \Conia\Boiler\Engine(
+    [
+        'theme' =&gt; '/path/to/theme',
+        'templates' =&gt; '/path/to/templates',
+    ],
+    defaults: [
+        'titleSuffix' =&gt; ' - Boiler Template Engine',
+    ],
+    autoescape: true,
+);
+</code></pre>
+<h3 id="simple-rendering">Simple rendering</h3>
+<p>To render the template <em>page.php</em> from the filesystem tree above, you
+reference it using the name <em>page</em> with or without the file extension.</p>
+<pre><code>$html = $engine-&gt;render('page');
+
+// or
+$html = $engine-&gt;render('page.php');
+</code></pre>
+<p>If you like to use a custom file extension add it to the name:</p>
+<pre><code>$engine-&gt;render('page.tpl');
+</code></pre>
+<p>Values available to the template must be provided as associative array:</p>
+<pre><code>$html = $engine-&gt;render('page', [
+    'title' =&gt; 'The Title',
+    'content' =&gt; 'The content of the page.',
+]);
+</code></pre>
+<p>If the <em>page.php</em> template would look like this:</p>
+<pre><code>&lt;body&gt;
+    &lt;h1&gt;&lt;?= $title ?&gt;&lt;/h1&gt;
+    &lt;div&gt;&lt;?= $content ?&gt;&lt;/div&gt;
+&lt;/body&gt;
+</code></pre>
+<p>The result of the <code>render</code> call above would be:</p>
+<pre><code>&lt;body&gt;
+    &lt;h1&gt;The Title&lt;/h1&gt;
+    &lt;div&gt;The content of the page.&lt;/div&gt;
+&lt;/body&gt;
+</code></pre>
+<h3 id="templates-in-subdirectories">Templates in subdirectories</h3>
+<pre><code>$html = $engine-&gt;render('subdir/subtemplate', ['value' =&gt;  13]);
+</code></pre>
+<h3 id="template-overrides">Template overrides</h3>
+<p>If a template with the same name is available in more than one of your 
+template directories, the first one found is used. In our example above,
+there is a <em>blog</em> template in both <code>templates</code> and <code>theme</code>. As <code>theme</code>
+is the first entry in the array passed to <a href="../engine/"><code>Engine</code></a>, <em>blog</em>
+from this directory is used by default:</p>
+<pre><code>// renders /path/to/theme/blog.php
+$engine-&gt;render('blog', ['value' =&gt; 13]);
+</code></pre>
+<p>This can for example be used to implement themeable or customizable templates
+where you provide a default set of templates which can later be partially 
+or completely overriden by a theme or similar.</p>
+<p>You can force to render <em>blog</em> from the <code>templates</code> directory if you use 
+namespaces. See the next section on how this is accomplished.</p>
+<h3 id="namespaces">Namespaces</h3>
+<p>In our engine instantiation example above we pass an associative array with
+the template directories to the constructor. The keys of the array serve as namespaces.
+To render a template from a specific namespace, locate it using the
+namespace followed bei a colon followed by the template name:</p>
+<pre><code>$html = $engine-&gt;render('templates:blog', ['value' =&gt;  13]);
+
+// A template in a subdirectory
+$html = $engine-&gt;render('templates:subdir/subtemplate', ['value' =&gt;  13]);
+</code></pre>
+<p>This way you can prevent template overriding explained in the section before.</p>
+            
+            </div>
+        </article>
+
+        <aside class="toc desktop">
+            <!-- github repo URL -->
+            
+                <a href="https://github.com/coniadev/boiler/edit/master/docs/rendering.md" class="github-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+                    Edit on GitHub
+                </a>
+            
+
+            <div class="title">This Page</div>
+
+            <ul>
+            
+                <li><a href="#rendering-templates">Rendering Templates</a></li>
+                
+                    <li>
+                        <a href="#simple-rendering">Simple rendering</a>
+                        
+                    </li>
+                
+                    <li>
+                        <a href="#templates-in-subdirectories">Templates in subdirectories</a>
+                        
+                    </li>
+                
+                    <li>
+                        <a href="#template-overrides">Template overrides</a>
+                        
+                    </li>
+                
+                    <li>
+                        <a href="#namespaces">Namespaces</a>
+                        
+                    </li>
+                
+            
+            </ul>
+
+            <div class="title">Navigate</div>
+
+        
+            <ul class="prevnext">
+                <li>
+                    <a href="/" title="Home page">
+                        Home page
+                    </a>
+                </li>
+                
+                <li>
+                    Previous:
+                    <a href="../engine/" title="The Engine">
+                        <i>The Engine</i>
+                    </a>
+                </li>
+                
+                
+                <li>
+                    Next:
+                    <a href="../values/" title="Displaying Values">
+                        <i>Displaying Values</i>
+                    </a>
+                </li>
+                
+            </ul>
+        
+        </aside>
+    </main>
+
+    <footer>
+        © 2022 ebene fünf GmbH |
+        Built with <a href="https://www.mkdocs.org">MkDocs</a>.
+    </footer>
+
+  <!--
+  MkDocs version      : 1.5.3
+  Docs Build Date UTC : 2024-01-22 15:38:15.471074+00:00
+  -->
+</body>
+</html>
